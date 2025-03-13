@@ -1,0 +1,14 @@
+# Build files
+bin/
+obj/
+.vs/
+*.user
+*.suo
+
+# Logs
+*.log
+
+# Config files (uncomment if you don't want to track them)
+appsettings.json
+appsettings.Development.json
+

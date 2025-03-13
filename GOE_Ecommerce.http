@@ -1,0 +1,6 @@
+@GOE_Ecommerce_HostAddress = http://localhost:5237
+
+GET {{GOE_Ecommerce_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
