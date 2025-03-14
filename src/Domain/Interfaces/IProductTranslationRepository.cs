@@ -2,7 +2,7 @@
 
 namespace Domain.Interfaces
 {
-    interface IProductTranslationRepository
+    public interface IProductTranslationRepository
     {
         Task AddTranslationAsync(Guid productId, ProductTranslation productTranslation);
         Task<ProductTranslation> GetTranslationAsync(Guid productId, string language);

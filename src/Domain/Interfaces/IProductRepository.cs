@@ -2,12 +2,12 @@
 
 namespace Domain.Interfaces
 {
-    interface IProductRepository
+    public interface IProductRepository
     {
         Task AddProductAsync(Product product);
         Task<IEnumerable<Product>> GetAllProductsAsync();
         Task<Product> GetProductByIdAsync(Guid id);
         Task UpdateProductAsync(Product product);
-        Task RemoveProductAsync(Guid id);
+        Task RemoveProductAsync(Product product);
     }
 }
