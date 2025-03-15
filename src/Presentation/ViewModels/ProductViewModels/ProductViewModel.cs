@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Presentation.ViewModels.Product
+namespace Presentation.ViewModels.ProductViewModels
 {
     public class ProductViewModel
     {
