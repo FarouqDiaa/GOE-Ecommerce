@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Application.DTOs.UserDTOs
 {
-    class SignUpDTO
+    public class SignUpDTO
     {
         [Required]
         [StringLength(100)]
