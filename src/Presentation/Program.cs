@@ -2,10 +2,14 @@ using Microsoft.OpenApi.Models;
 using DotNetEnv;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
-//using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Presentation.Middleware;
+using Presentation;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddControllers();
@@ -13,18 +17,31 @@ builder.Services.AddEndpointsApiExplorer();
 Env.Load();
 builder.Configuration.AddEnvironmentVariables();
 
-builder.Services.AddLogging(logging =>
-{
-    logging.ClearProviders();
-    logging.AddConsole();
-    logging.AddDebug();
-});
+var jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET");
+var jwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER");
+var jwtAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE");
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtIssuer,
+            ValidAudience = jwtAudience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret!))
+        };
+    });
+
+builder.Services.AddAuthorization();
+
 
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "TCCD", Version = "v1", Description = "TCCD Website APIs" });
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "GOE", Version = "v1", Description = "GOE APIs" });
 
-    c.IncludeXmlComments(Path.Combine(System.AppContext.BaseDirectory, "TCCD.Backend.xml"));
     c.EnableAnnotations();
 });
 
@@ -34,8 +51,6 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
 
 builder.Services.ConfigureApplicationServices(builder.Configuration);
-
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -49,6 +64,11 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
     });
 }
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
+app.UseAuthorization();
+app.UseMiddleware<ExceptionHandlingMiddleware>();
+
 app.UseAuthorization();
 app.MapControllers();
 app.Run();
