@@ -3,8 +3,8 @@ using Application.DTOs.ProductTranslationDTOs;
 
 namespace Application.Abstractions.ProductTranslationUseCases
 {
-    interface IGetProductTranslationUseCase
+    public interface IGetProductTranslationUseCase
     {
-        Task<ProductTranslationDTO> ExecuteAsync(Guid productTranslationId);
+        Task<ProductTranslationDTO> ExecuteAsync(Guid productId, string language);
     }
 }
