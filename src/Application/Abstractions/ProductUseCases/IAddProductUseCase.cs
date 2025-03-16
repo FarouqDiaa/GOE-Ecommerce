@@ -4,6 +4,6 @@ namespace Application.Abstractions.ProductUseCases
 {
     public interface IAddProductUseCase
     {
-        Task Execute(NewProductDTO product);
+        Task ExecuteAsync(NewProductDTO product);
     }
 }

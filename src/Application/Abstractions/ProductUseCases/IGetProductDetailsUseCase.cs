@@ -1,9 +1,11 @@
 ﻿
 
+using Application.DTOs.ProductDTOs;
+
 namespace Application.Abstractions.ProductUseCases
 {
     public interface IGetProductDetailsUseCase
     {
-        Task Execute(Guid productId);
+        Task<ProductDTO> ExecuteAsync(Guid productId);
     }
 }

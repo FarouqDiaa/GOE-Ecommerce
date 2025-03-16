@@ -1,9 +1,11 @@
 ﻿
 
+using Application.DTOs.ProductDTOs;
+
 namespace Application.Abstractions.ProductUseCases
 {
     public interface IListProductsUseCase
     {
-        Task Execute();
+        Task<IEnumerable<ProductDTO>> ExecuteAsync();
     }
 }
