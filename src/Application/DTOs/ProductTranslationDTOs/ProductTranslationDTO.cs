@@ -2,7 +2,7 @@
 
 namespace Application.DTOs.ProductTranslationDTOs
 {
-    class ProductTranslationDTO : BaseProductTranslationDTO
+    public class ProductTranslationDTO : BaseProductTranslationDTO
     {
         public Guid ProductTranslationId { get; set; }
     }
