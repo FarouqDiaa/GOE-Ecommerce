@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
 {
-    class CartRepository : ICartRepository
+    public class CartRepository : ICartRepository
     {
         private readonly ApplicationDbContext _context;
 

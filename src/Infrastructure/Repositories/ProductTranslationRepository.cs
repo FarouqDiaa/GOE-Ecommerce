@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
 {
-    class ProductTranslationRepository : IProductTranslationRepository
+    public class ProductTranslationRepository : IProductTranslationRepository
     {
         private readonly ApplicationDbContext _context;
         private readonly IUnitOfWork _unitOfWork;
@@ -16,9 +16,8 @@ namespace Infrastructure.Repositories
             _unitOfWork = unitOfWork;
         }
 
-        public async Task AddTranslationAsync(Guid productId, ProductTranslation productTranslation)
+        public async Task AddTranslationAsync(ProductTranslation productTranslation)
         {
-            productTranslation.ProductId = productId;
             _context.ProductTranslations.Add(productTranslation);
             await _unitOfWork.CommitAsync();
         }

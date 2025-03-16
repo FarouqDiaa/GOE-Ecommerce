@@ -5,8 +5,10 @@ namespace Domain.Interfaces
     public interface IUserRepository
     {
         Task RegisterAsync(User user);
-        Task<User> LoginAsync(string username, string password);
-        Task<User> GetUserByIdAsync(Guid id);
-        Task DeleteUserAsync(Guid id);
+        Task<bool> UserExistsAsync(string email);
+        Task<User?> GetUserByEmailAsync(string email);
+        Task<User?> GetUserByIdAsync(Guid id);
+        Task DeleteUserAsync(User user);
+
     }
 }

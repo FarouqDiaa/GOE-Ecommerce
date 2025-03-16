@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
 {
-    class ProductRepository : IProductRepository
+    public class ProductRepository : IProductRepository
     {
         private readonly ApplicationDbContext _context;
         private readonly IUnitOfWork _unitOfWork;
@@ -42,5 +42,6 @@ namespace Infrastructure.Repositories
             _context.Products.Remove(product);
             await _unitOfWork.CommitAsync();
         }
+
     }
 }
