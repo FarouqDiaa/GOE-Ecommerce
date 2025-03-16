@@ -14,6 +14,11 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Presentation", "src\Presentation\Presentation.csproj", "{D8EB1706-7825-4238-9843-F6C6498F1D7E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Runtime", "Runtime\Runtime.csproj", "{8CF27B0D-DBE2-4CF9-A416-77D13EB20192}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A8A21C54-0477-4CE7-B452-B9DCC8D1B123} = {A8A21C54-0477-4CE7-B452-B9DCC8D1B123}
+		{C262C8A5-B9EB-45D3-8E0E-BAE4833E5B82} = {C262C8A5-B9EB-45D3-8E0E-BAE4833E5B82}
+		{D8EB1706-7825-4238-9843-F6C6498F1D7E} = {D8EB1706-7825-4238-9843-F6C6498F1D7E}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
