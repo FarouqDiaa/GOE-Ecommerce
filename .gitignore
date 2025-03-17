@@ -7,7 +7,7 @@ obj/
 *.env
 # Logs
 *.log
-
+docker-compose.override.yml
 # Config files (uncomment if you don't want to track them)
 appsettings.json
 appsettings.Development.json

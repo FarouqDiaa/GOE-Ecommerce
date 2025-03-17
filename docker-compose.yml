@@ -1,34 +1,35 @@
-version: '3.4'
+version: '3.8'
 
 services:
-  db:
+  postgres:
     image: postgres:latest
-    container_name: goe_db
     restart: always
     environment:
-      POSTGRES_DB: goe_ecommerce
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: goe_user
+      POSTGRES_PASSWORD: goe_password
+      POSTGRES_DB: GOEDB
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U goe_user -d GOEDB"]
+      interval: 10s
+      retries: 5
+      start_period: 10s
 
   api:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: goe_api
+    restart: always
     depends_on:
-      - db
+      postgres:
+        condition: service_healthy
     environment:
-      ConnectionStrings__DefaultConnection: "Host=db;Port=5432;Database=goe_ecommerce;Username=postgres;Password=postgres"
+      - DEFAULT_CONNECTION=Host=postgres;Port=5432;Database=GOEDB;Username=goe_user;Password=goe_password
     ports:
-      - "5000:5000"
-      - "5001:5001"
-    volumes:
-      - .:/app
-    command: ["dotnet", "run", "--project", "src/Presentation"]
+      - "8080:80"
 
 volumes:
   postgres_data:

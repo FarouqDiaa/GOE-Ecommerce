@@ -46,13 +46,23 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 // Configure Database Connection
-var connectionString = Environment.GetEnvironmentVariable("DEFAULT_CONNECTION")!;
+//var connectionString = Environment.GetEnvironmentVariable("DEFAULT_CONNECTION")!;
+var connectionString = builder.Configuration.GetValue<string>("DEFAULT_CONNECTION");
+if (string.IsNullOrEmpty(connectionString))
+{
+    throw new InvalidOperationException("Database connection string is missing.");
+}
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
-
+builder.Services.AddScoped<ApplicationDbContext>();
 builder.Services.ConfigureApplicationServices(builder.Configuration);
 var app = builder.Build();
-
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    dbContext.Database.Migrate();
+}
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 {
@@ -64,10 +74,10 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
     });
 }
 app.UseHttpsRedirection();
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseAuthorization();
 app.MapControllers();
