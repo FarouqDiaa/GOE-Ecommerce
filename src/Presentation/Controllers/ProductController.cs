@@ -2,6 +2,7 @@
 using Application.DTOs.ProductDTOs;
 using Application.Responses;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.ViewModels.ProductViewModels;
 
@@ -21,6 +22,7 @@ namespace Presentation.Controllers
         }
 
         [HttpPost]
+        //[Authorize]
         public async Task<IActionResult> AddProduct([FromBody] NewProductViewModel newProductViewModel)
         {
             var newProductDTO = _mapper.Map<NewProductViewModel, NewProductDTO>(newProductViewModel);
@@ -29,6 +31,7 @@ namespace Presentation.Controllers
         }
 
         [HttpGet]
+        //[Authorize]
         public async Task<IActionResult> GetAllProducts()
         {
             var products = await _productService.ListProductsAsync();
@@ -37,6 +40,7 @@ namespace Presentation.Controllers
         }
 
         [HttpGet("{id}")]
+        //[Authorize]
         public async Task<IActionResult> GetProductById(Guid id)
         {
             var product = await _productService.GetProductDetailsAsync(id);
@@ -45,6 +49,7 @@ namespace Presentation.Controllers
         }
 
         [HttpPatch("{id}")]
+        //[Authorize]
         public async Task<IActionResult> UpdateProduct(Guid id, [FromBody] NewProductViewModel productViewModel)
         {
             var productDTO = _mapper.Map<NewProductViewModel, NewProductDTO>(productViewModel);
@@ -53,6 +58,7 @@ namespace Presentation.Controllers
         }
 
         [HttpDelete("{id}")]
+        //[Authorize]
         public async Task<IActionResult> DeleteProduct(Guid id)
         {
             await _productService.RemoveProductsAsync(id);

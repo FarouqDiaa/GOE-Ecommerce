@@ -6,10 +6,11 @@ using Application.DTOs.ProductDTOs;
 using Application.Responses;
 using Application.DTOs.CartDTOs;
 using Presentation.ViewModels.CartViewModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Presentation.Controllers
 {
-    [Route("api/cart/{userId}")]
+    [Route("api/[controller]")]
     public class CartController : Controller
     {
         private readonly ICartManagmentService _cartManagementService;
@@ -22,6 +23,7 @@ namespace Presentation.Controllers
         }
 
         [HttpPost("{userId}/items")]
+        //[Authorize]
         public async Task <IActionResult> AddProductToCart(Guid userId, [FromBody] ProductViewModel viewModel)
         {
             var dto = _mapper.Map<ProductDTO>(viewModel);
@@ -30,6 +32,7 @@ namespace Presentation.Controllers
         }
 
         [HttpGet("{userId}")]
+        //[Authorize]
         public async Task<IActionResult> GetCartDetails(Guid userId)
         {
             var cartDTO = await _cartManagementService.GetCartDetailsAsync(userId);
@@ -38,6 +41,7 @@ namespace Presentation.Controllers
         }
 
         [HttpDelete("{userId}/items/{productId}")]
+        //[Authorize]
         public async Task<IActionResult> RemoveProductFromCart(Guid userId, Guid productId)
         {
             await _cartManagementService.RemoveProductFromCartAsync(userId, productId);

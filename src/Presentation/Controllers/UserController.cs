@@ -43,7 +43,7 @@ namespace Presentation.Controllers
         }
 
         [HttpGet("{id}")]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> GetUserDetails(Guid id)
         {
             var user = await _userService.GetUserDetailsAsync(id);
@@ -53,7 +53,7 @@ namespace Presentation.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> DeleteUser(Guid id)
         {
             await _userService.DeleteUserAsync(id);

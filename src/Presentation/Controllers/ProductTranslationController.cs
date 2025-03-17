@@ -2,12 +2,13 @@
 using Application.DTOs.ProductTranslationDTOs;
 using Application.Responses;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.ViewModels.ProductTranslation;
 
 namespace Presentation.Controllers
 {
-    [Route("api/products/{productId}/translations")]
+    [Route("api/[controller]")]
     [ApiController]
     public class ProductTranslationController : Controller
     {
@@ -20,7 +21,8 @@ namespace Presentation.Controllers
             _mapper = mapper;
         }
 
-        [HttpPost]
+        [HttpPost("{productId}/translations")]
+        //[Authorize]
         public async Task<IActionResult> AddTranslation(Guid productId, [FromBody] ProductTranslationViewModel viewModel)
         {
 
@@ -32,6 +34,7 @@ namespace Presentation.Controllers
         }
 
         [HttpGet("{productId}/{language}")]
+        //[Authorize]
         public async Task<IActionResult> GetTranslation(Guid productId, string language)
         {
             var productTranslationDto = await _productTranslationService.GetProductTranslationAsync(productId, language);
