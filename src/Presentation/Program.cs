@@ -42,21 +42,54 @@ builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "GOE", Version = "v1", Description = "GOE APIs" });
 
-    c.EnableAnnotations();
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "Enter 'Bearer {your JWT token}'",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Scheme = "Bearer"
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] {}
+        }
+    });
 });
 
 // Configure Database Connection
-//var connectionString = Environment.GetEnvironmentVariable("DEFAULT_CONNECTION")!;
-var connectionString = builder.Configuration.GetValue<string>("DEFAULT_CONNECTION");
-if (string.IsNullOrEmpty(connectionString))
-{
-    throw new InvalidOperationException("Database connection string is missing.");
-}
+var connectionString = Environment.GetEnvironmentVariable("DEFAULT_CONNECTION")!;
+//var connectionString = builder.Configuration.GetValue<string>("DEFAULT_CONNECTION");
+//if (string.IsNullOrEmpty(connectionString))
+//{
+//    throw new InvalidOperationException("Database connection string is missing.");
+//}
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
 builder.Services.AddScoped<ApplicationDbContext>();
 builder.Services.ConfigureApplicationServices(builder.Configuration);
+builder.Services.AddLogging();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        builder => builder
+            .AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader());
+});
+
+
 var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
@@ -74,6 +107,8 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
     });
 }
 app.UseHttpsRedirection();
+app.UseCors("AllowAll");
+
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseAuthentication();

@@ -64,8 +64,6 @@ namespace Presentation
             services.AddScoped<IProductTranslationService, ProductTranslationService>();
             services.AddScoped<ICartManagmentService, CartManagmentService>();
 
-            // Middleware
-            services.AddTransient<ExceptionHandlingMiddleware>();
 
             // Use Cases
             services.AddScoped<IRegisterUseCase, RegisterUseCase>();

@@ -1,9 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Threading.Tasks;
+﻿using System.Net;
+using System.Text.Json;
 using Application.Exceptions.UserExceptions;
 using Application.Exceptions.ProductExceptions;
 using Application.Exceptions.CartExceptions;
@@ -16,47 +12,38 @@ namespace Presentation.Middleware
         private readonly RequestDelegate _next;
         private readonly ILogger<ExceptionHandlingMiddleware> _logger;
 
-        public ExceptionHandlingMiddleware(ILogger<ExceptionHandlingMiddleware> logger)
+        public ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger)
         {
-            _logger = logger;
+            _next = next ?? throw new ArgumentNullException(nameof(next));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task InvokeAsync(HttpContext context, RequestDelegate next)
+        public async Task InvokeAsync(HttpContext context)
         {
             try
             {
-                await next(context);
-            }
-            catch (CartNotFoundException ex)
-            {
-                _logger.LogWarning(ex, "Cart not found exception caught in middleware");
-                await HandleExceptionAsync(context, HttpStatusCode.NotFound, ex.Message);
-            }
-            catch (ProductNotFoundException ex)
-            {
-                _logger.LogWarning(ex, "Product not found exception caught in middleware");
-                await HandleExceptionAsync(context, HttpStatusCode.NotFound, ex.Message);
-            }
-            catch (EmailUsedException ex)
-            {
-                _logger.LogWarning(ex, "Used email exception caught in middleware");
-                await HandleExceptionAsync(context, HttpStatusCode.BadRequest, ex.Message);
-            }
-            catch (UserNotFoundException ex)
-            {
-                _logger.LogWarning(ex, "User not found exception caught in middleware");
-                await HandleExceptionAsync(context, HttpStatusCode.NotFound, ex.Message);
+                await _next(context);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An unexpected error occurred");
-                await HandleExceptionAsync(context, HttpStatusCode.InternalServerError, "An unexpected error occurred");
+                await HandleExceptionAsync(context, ex);
             }
         }
 
-        private Task HandleExceptionAsync(HttpContext context, HttpStatusCode statusCode, string message)
+        private async Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
             context.Response.ContentType = "application/json";
+
+            (HttpStatusCode statusCode, string message) = exception switch
+            {
+                CartNotFoundException => (HttpStatusCode.NotFound, "Cart not found"),
+                ProductNotFoundException => (HttpStatusCode.NotFound, "Product not found"),
+                EmailUsedException => (HttpStatusCode.BadRequest, "Email is already in use"),
+                UserNotFoundException => (HttpStatusCode.NotFound, "User not found"),
+                _ => (HttpStatusCode.InternalServerError, "An unexpected error occurred")
+            };
+
+            _logger.LogError(exception, message);
             context.Response.StatusCode = (int)statusCode;
 
             var errorResponse = new ErrorResponse
@@ -67,7 +54,9 @@ namespace Presentation.Middleware
                 }
             };
 
-            return context.Response.WriteAsJsonAsync(errorResponse);
+            var json = JsonSerializer.Serialize(errorResponse, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+
+            await context.Response.WriteAsync(json);
         }
     }
 }
