@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Application.DTOs.CartItemDTOs
 {
-    class BaseCartItemDTO
+    public class BaseCartItemDTO
     {
         [Required]
         public Guid ProductId { get; set; }

@@ -1,4 +1,6 @@
 ﻿
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace Application.DTOs.CartDTOs
 {
     public class NewCartDTO : BaseCartDTO
