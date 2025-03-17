@@ -11,7 +11,7 @@ namespace Domain.Entities
 
         [Required]
         [DataType(DataType.DateTime)]
-        [Column(TypeName = "datetime2")]
+        [Column(TypeName = "timestamp")]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }
