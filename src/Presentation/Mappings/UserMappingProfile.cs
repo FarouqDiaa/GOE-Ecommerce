@@ -2,6 +2,7 @@
 using Presentation.ViewModels.UserViewModels;
 using Domain.Entities;
 using Application.DTOs.UserDTOs;
+using Application.DTOs.LoginDTO;
 
 namespace Runtime.Mappings
 {
@@ -10,6 +11,7 @@ namespace Runtime.Mappings
         public UserMappingProfile()
         {
             CreateMap<SignUpViewModel, SignUpDTO>().ReverseMap();
+            CreateMap<LoginViewModel, LoginDTO>().ReverseMap();
             CreateMap<User, SignUpDTO>().ReverseMap();
             CreateMap<User, UserDTO>().ReverseMap();
             CreateMap<UserDTO, UserViewModel>().ReverseMap();
