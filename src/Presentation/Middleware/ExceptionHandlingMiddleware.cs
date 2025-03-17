@@ -1,9 +1,13 @@
-﻿using Application.Exceptions.UserExceptions;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Threading.Tasks;
+using Application.Exceptions.UserExceptions;
 using Application.Exceptions.ProductExceptions;
 using Application.Exceptions.CartExceptions;
-
 using Application.Responses;
-using System.Net;
 
 namespace Presentation.Middleware
 {
@@ -12,17 +16,16 @@ namespace Presentation.Middleware
         private readonly RequestDelegate _next;
         private readonly ILogger<ExceptionHandlingMiddleware> _logger;
 
-        public ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger)
+        public ExceptionHandlingMiddleware(ILogger<ExceptionHandlingMiddleware> logger)
         {
-            _next = next;
             _logger = logger;
         }
 
-        public async Task InvokeAsync(HttpContext context)
+        public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
             try
             {
-                await _next(context);
+                await next(context);
             }
             catch (CartNotFoundException ex)
             {
@@ -59,9 +62,9 @@ namespace Presentation.Middleware
             var errorResponse = new ErrorResponse
             {
                 Errors = new Dictionary<string, string[]>
-                        {
-                            { "Error", new[] { message } }
-                        }
+                {
+                    { "Error", new[] { message } }
+                }
             };
 
             return context.Response.WriteAsJsonAsync(errorResponse);
